@@ -17,7 +17,13 @@ int ** alocaMatriz (int m, int n){
 	
 }
 
-void libera (int **matriz){
+void libera (int **matriz, int n){
+	
+	for(int a=0; a<n; ++a){
+		
+		free(matriz[a]);
+	
+	}
 	
 	free(matriz);
 	
@@ -54,8 +60,16 @@ int main(int argc, char **argv)
 		}
 	}
 	
-	libera(matriz);
+	libera(matriz, n);
+	
+	for( int c=0; c<m; ++c ){
+		
+		for( int d=0; d<n; ++d ){
+			
+			printf("\nValor para a posição %d %d: %d", c, d, matriz[c][d]);
+	
+		}
+	}
 	
 	return 0;
 }
-

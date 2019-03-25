@@ -4,32 +4,57 @@ struct s {
 	char nome[20];
 	int data[3];
 	int cpf;
-	struct s *next;
 } s;
 
 void preencher( struct s* lista ){
+		
+		printf("Digite o nome: \n");
+		scanf("%s", lista.nome);
+		
+		printf("Digite o dia de nascimento: \n");
+		scanf("%d", lista.data[0]);
+		
+		printf("Digite o mês de nascimento: \n");
+		scanf("%d", lista.data[1]);
+		
+		printf("Digite o ano de nascimento: \n");
+		scanf("%d", lista.data[2]);
+		
+		printf("Digite o cpf: \n");
+		scanf("%d", lista.cpf);
+			
+}
+
+void imprimir( struct s* lista ){
 	
-	int n;
-	printf("Digite o número de pessoas a serem adicionadas: ");
-	scanf("%d", &n);
 	
-	for( int a=0; a<n; ++a ){
+		printf("Nome: %s \n", lista.nome);
 		
-		printf("Digite o %dº nome: \n", a);
-		scanf("%s", lista->nome);
+		printf("Dia de nascimento: &d\n", lista.data[0]);
+			
+		printf("Digite o mês de nascimento: \n");
+		scanf("%d", lista.data[1]);
 		
+		printf("Digite o ano de nascimento: \n");
+		scanf("%d", lista.data[2]);
 		
-	}
+		printf("Digite o cpf: \n");
+		scanf("%d", lista.cpf);
+		
+
+	
+
 	
 }
 
 int main(int argc, char **argv)
 {
-	struct s* lista;
+	struct s *lista;
 	
-	
-	
-	preencher( lista );
+	lista = malloc(sizeof(struct s));
+
+	preencher( &lista );
+	imprimir( &lista );
 	
 	
 	

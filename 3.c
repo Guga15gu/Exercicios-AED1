@@ -38,7 +38,22 @@ int main(int argc, char **argv)
 		}
 	}
 	
+	for(int a=0; a<n; ++a){
+		
+		free(matriz[a]);
+	
+	}
+	
 	free(matriz);
+	
+	for( int c=0; c<m; ++c ){
+		
+		for( int d=0; d<n; ++d ){
+			
+			printf("\nValor para a posição %d %d: %d", c, d, matriz[c][d]);
+	
+		}
+	}
 	
 	return 0;
 }

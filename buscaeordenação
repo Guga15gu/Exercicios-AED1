@@ -1,0 +1,9 @@
+1. A ordenação é definida por uma entrada de n dados - a(1), a(2), ..., a(n) - na qual a saída será os n dados reordenados a partir de um determinado atributo, no qual a(1) <= a(2) <= ... <= a(n).  
+
+2. A partir de um vetor de n elementos - a(1), a(2), ..., a(n) - , o menor elemento do vetor - a(k) - será o qual satifaz a seguinte condição : a(k) <= a(g), sendo 0 <= g <= n, tal elemento pode ser encontrado após inúmeros operações de comparação, no qual um candidato k é comparado com os restantes n-1 elementos, e se algum elemento for menor, ele substituirá o candidato e continuará a ser comparado com os demais, seguindo sendo substituido até todos o n elementos tiverem sido comparados, no final do processo o candidato será o menor.
+
+3. Após a aplicação de um vestibular é necessário a criação de um rank ordenado por notas. Após a coleta de temperaturas dentro de um dia é necessário encontrar o menor valor para ser atribuído a temperatuda mínima do dia.
+
+
+
+

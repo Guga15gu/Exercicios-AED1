@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct registro{
     char nome[30];
@@ -62,13 +63,15 @@ void retira(registro x, Apontador *p){
     }
 
     if((*p)->pEsq != NULL){
-
+        antecessor(*p, &(*p)->pEsq);
+        return;
     }
 
     aux = *p;
     *p  = (*p)-> pDir;
     free(aux);
-    
+
+free(Aux);
 }
 
 void antecessor(Apontador q, Apontador *r){
@@ -79,9 +82,17 @@ void antecessor(Apontador q, Apontador *r){
         Antecessor(q, &(*r)->pDir);
         return;
     }
-    q->
+    q-> dado = (*r)-> dado;
+    aux = (*r);
+    *r = (*r)->pEsq;
+    free(aux);
 }
-int main(){ 
+
+void preordem(Apontador *agenda){
+    
+    
+}
+int main(){
 
 
 

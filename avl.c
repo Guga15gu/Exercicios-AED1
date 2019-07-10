@@ -3,7 +3,7 @@
 
 typedef struct registro{
     char nome[30];
-    int telefone;
+    int key;
 }registro;
 
 typedef struct No *Apontador;
@@ -15,27 +15,118 @@ typedef struct No{
 
 int insere(registro x, Apontador *p);
 void retira(registro x, Apontador *p);
-void inicializa(Apontador *agenda);
+void inicializa(Apontador *p);
 void antecessor(Apontador q, Apontador *r);
-void preordem(Apontador *agenda);
-void posordem(Apontador *agenda);
-void central(Apontador *agenda);
-void pesquisa( registro *x, Apontador agenda);
-int Altura(Apontador *tree);
-int FT(Apontador *tree);
-int balance(Apontador *ppRaiz);
+void preordem(Apontador *p);
+void posordem(Apontador *p);
+void central(Apontador *p);
+void pesquisa( registro *x, Apontador p);
+int Altura(Apontador *p);
+int FT(Apontador *p);
+int balance(Apontador *p);
+Apontador newNode();
 
-int insere(registro x, Apontador *tree){
-    if(*tree == NULL){
-        *tree = (Apontador) malloc (sizeof(No));
-        (*tree)-> dado = x;
-        (*tree)->pEsq = NULL;
-        (*tree)->pDir = NULL;
+void inicializa(Apontador *p){
+    *agenda = NULL;
+}
+Apontador newNode(){
+    Apontador p;
+
+    p = (Apontador) malloc (sizeof(No));
+
+    if(p == NULL){
+        printf("\nErro de alocação.");
+       exit(1);
+    }
+    else{
+        return p;
+    }
+}
+void RSD (Apontador *p){
+    Apontador aux;
+    aux = (*p)->pEsq;
+    (*p)->pEsq = (*p)->pDir;
+    (*p)->pDir = p;
+    p = aux;
+}
+void RSE (Apontador *p){
+    Apontador aux;
+    aux = (*p)->pDir;
+    (*p)->pDir = aux->pEsq;
+    aux->pEsq = p;
+    p = aux;
+} 
+int FB(Apontador *p){
+    if(p == NULL){
+        return 0;
+    }
+    return Altura((*p)->pEsq) - Altura((*p)->pDir);
+}
+int Altura(Apontador *p){
+
+    int esq, dir;
+
+    if(p == NULL){
+        return 0;
+    }
+    esq = Altura((*p)->pEsq);
+    dir = Altura((*p)->pDir);
+
+    if(esq>dir){
+        return esq+1;
+    }
+    else{
+        return dir+1;
+    }
+}
+int balance(Apontador *p){
+ 	int fb = FB(p);
+
+ 	if( fb > 1)
+ 		return BalancaEsquerda(&p);
+ 	else if(fb < -1)
+ 		return BalancaDireita(&p);
+ 	else
+ 		return 0;
+}
+int balancaEsquerda(Apontador *p){
+    int fbe = FB ((*p)->pEsq);
+    if ( fbe > 0 ){
+        RSD(p);
         return 1;
     }
-    else if(x.telefone < (*tree)->dado.telefone){
-        if(insere(x, &(*tree)->pEsq)){
-            if(balance(tree)){
+    else if (fbe < 0 ){ /* Rotação Dupla Direita */
+        RSE( &((*p)->pEsq) );
+        RSD( *p ); /* &(*ppRaiz) */
+        return 1;
+    }
+  return 0;
+}
+int balancaDireita(Apontador *p){
+    int fbd = FB ((*p)->pDir);
+    if ( fbd < 0 ){
+        RSE(p);
+        return 1;
+    }
+    else if (fbe > 0 ){ /* Rotação Dupla Esquerda */
+        RSD( &((*p)->pDir) );
+        RSE( *p ); /* &(*ppRaiz) */
+        return 1;
+    }
+  return 0;
+}
+int insere(registro x, Apontador *p){
+
+    if(*p == NULL){
+        *p = newNode();
+        (*p)-> dado = x;
+        (*p)->pEsq = NULL;
+        (*p)->pDir = NULL;
+        return 1;
+    }
+    else if(x.key < (*p)->dado.key){
+        if(insere(x, &(*p)->pEsq)){
+            if(balance(p)){
                 return 0;
             }
             else{
@@ -43,9 +134,9 @@ int insere(registro x, Apontador *tree){
             }
         }
     }
-    else if(x.telefone > (*tree)->dado.telefone){
-        if(insere(x, &(*tree)->pDir)){
-            if(balance(tree)){
+    else if(x.key > (*p)->dado.key){
+        if(insere(x, &(*p)->pDir)){
+            if(balance(p)){
                 return 0;
             }
             else{
@@ -62,9 +153,6 @@ int insere(registro x, Apontador *tree){
         return 0;
     }
 }
-void inicializa(Apontador *agenda){
-    *agenda = NULL;
-}
 void retira(registro x, Apontador *p){
     Apontador aux;
 
@@ -72,29 +160,32 @@ void retira(registro x, Apontador *p){
         printf("Erro: Registro não existente.\n");
         return;
     }
-    if(x.telefone < (*p)->dado.telefone){
+    if(x.key < (*p)->dado.key){
         retira(x, &(*p)->pEsq);
         return;
     }
-    if(x.telefone > (*p)->dado.telefone){
+    else if(x.key > (*p)->dado.key){
         retira(x, &(*p)->pDir);
         return;
     }
-    if((*p)->pDir == NULL){
+    else{
+         if((*p)->pDir == NULL){
+            aux = *p;
+            *p = (*p)->pEsq;
+            free(aux);
+            return;
+        }
+
+        if((*p)->pEsq != NULL){
+            antecessor(*p, &(*p)->pEsq);
+            return;
+        }
+
         aux = *p;
-        *p = (*p)->pEsq;
+        *p  = (*p)-> pDir;
         free(aux);
-        return;
     }
-
-    if((*p)->pEsq != NULL){
-        antecessor(*p, &(*p)->pEsq);
-        return;
-    }
-
-    aux = *p;
-    *p  = (*p)-> pDir;
-    free(aux);
+    balance(p);
 
 }
 void antecessor(Apontador q, Apontador *r){
@@ -116,7 +207,7 @@ void preordem(Apontador *agenda){
         return;
     }
     else{
-        printf("Nome: %s, telefone: %d.\n",(*agenda)->dado.nome, (*agenda)->dado.telefone);
+        printf("Nome: %s, key: %d.\n",(*agenda)->dado.nome, (*agenda)->dado.key);
         preordem(&((*agenda)->pEsq));
         preordem(&((*agenda)->pDir));
 
@@ -130,7 +221,7 @@ void posordem(Apontador *agenda){
     else{
         posordem(&((*agenda)->pEsq));
         posordem(&((*agenda)->pDir));
-        printf("Nome: %s, telefone: %d.\n",(*agenda)->dado.nome, (*agenda)->dado.telefone);
+        printf("Nome: %s, key: %d.\n",(*agenda)->dado.nome, (*agenda)->dado.key);
     }
 }
 void central(Apontador *agenda){
@@ -140,7 +231,7 @@ void central(Apontador *agenda){
     }
     else{
         central(&((*agenda)->pEsq));
-        printf("Nome: %s, telefone: %d.\n",(*agenda)->dado.nome, (*agenda)->dado.telefone);
+        printf("Nome: %s, key: %d.\n",(*agenda)->dado.nome, (*agenda)->dado.key);
         central(&((*agenda)->pDir));
     }
 }
@@ -150,92 +241,17 @@ void pesquisa( registro *x, Apontador agenda){
         printf("Erro : Registro nao esta presente na arvore\n");
         return;
     }
-    if(x->telefone < agenda->dado.telefone){
+    if(x->key < agenda->dado.key){
         pesquisa(x, agenda->pEsq);
         return;
     }
-    if(x->telefone > (agenda)->dado.telefone){
+    if(x->key > (agenda)->dado.key){
         pesquisa(x, agenda->pDir);
         return;
     }
     else{
         *x = agenda->dado;
     }
-}
-int FT(Apontador *tree){
-    if(tree == NULL){
-        return 0;
-    }
-    return Altura((*tree)->pEsq) - Altura((*tree)->pDir);
-}
-int Altura(Apontador *tree){
-
-    int esq, dir;
-
-    if(tree == NULL){
-        return 0;
-    }
-    esq = Altura((*tree)->pEsq);
-    dir = Altura((*tree)->pDir);
-
-    if(esq>dir){
-        return esq+1;
-    }
-    else{
-        return dir+1;
-    }
-}
-void RSD (Apontador *tree){
-    Apontador aux;
-
-    aux = (*tree)->pEsq;
-    (*tree)->pEsq = (*tree)->pDir;
-    (*tree)->pDir = tree;
-    tree = aux;
-}
-void RSE (Apontador *tree){
-int balancaesq(Apontador *tree){
-    int fbe = FB ( (*tree)->pEsq );
-    if ( fbe > 0 ){
-        RSD(tree);
-        return 1;
-    }
-  else if (fbe < 0 ){ /* Rotação Dupla Direita */
-    RSE( &((*tree)->pEsq) );
-    RSD( *tree ); /* &(*ppRaiz) */
-    return 1;
-  }
-  return 0;
-}
-int BalancaDireita(Apontador *tree){
-int balance(Apontador *ppRaiz){
- 	int fb = FB(ppRaiz);
-
- 	if( fb > 0)
- 		return BalancaEsquerda(&ppRaiz);
- 	else if(fb < -1)
- 		return BalancaDireita(&ppRaiz);
- 	else
- 		return 0;
- }
- 	int fbd = FB((*tree)->pDir);
- 	if( fbd < 0 ){
- 		RSE(tree);
- 		return 1;
- 	}
- 	else if(fbd > 0){ /* Rotacao dupla para Esquerada */
- 		RSD(&((*tree)->pDir));
- 		RSE(tree);
- 		return 1;
- 	}
- 	return 0;
- }
-    Apontador aux;
-
-    aux = (*tree)->pDir;
-    (*tree)->pDir = (*tree)->pEsq;
-    (*tree)->pEsq = tree;
-    tree = aux;
 }
 int main(){
 
@@ -252,13 +268,13 @@ int main(){
             case 1:
                 printf("\nDigite o nome: ");
                 scanf("%s", aux.nome);
-                printf("\nDigite a telefone: ");
-                scanf("%d", &aux.telefone);
+                printf("\nDigite a key: ");
+                scanf("%d", &aux.key);
                 insere(aux, &agenda);
             break;
             case 2:
-                printf("\nDigite a telefone: ");
-                scanf("%d", &aux.telefone);
+                printf("\nDigite a key: ");
+                scanf("%d", &aux.key);
                 retira(aux, &agenda);
             break;
             case 3:
@@ -274,8 +290,8 @@ int main(){
                 central(&agenda);
             break;
             case 6:
-                printf("\nDigite a telefone: ");
-                scanf("%d", &aux.telefone);
+                printf("\nDigite a key: ");
+                scanf("%d", &aux.key);
                 pesquisa(&aux, agenda);
             break;
         }
@@ -284,3 +300,4 @@ int main(){
 
     return 0;
 }
+
